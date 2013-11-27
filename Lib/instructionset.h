@@ -26,6 +26,8 @@ struct JumpLabel {
   SIZE_T cursor;
 };
 
+typedef const long LabelType;
+
 class InstructionSet {
  public:
 	InstructionSet(Emitter* pEmitter) : e(pEmitter), jump_counter(0) {

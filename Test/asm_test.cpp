@@ -25,7 +25,10 @@ memarr[i] = 0x11223344;
     mov eax,0x11223344
     mov [EDI+ESI*2],eax
 */
-    vaddps xmm1, xmm2 , xmm3
+    haddpd xmm1, xmm2
+    vhaddpd xmm1, xmm2 , xmm3
+    vhaddpd ymm1, ymm2 , ymm3
+
 
     //cmp ecx,0x20000000
     //mov ebx , [test_num]
@@ -34,6 +37,9 @@ memarr[i] = 0x11223344;
     //push [eax]
     //call test_func1
   }
+#else
+  long long x = 0x1234123412341234;
+  ++x;
 #endif
 free(memarr);
 }
