@@ -18,6 +18,8 @@
 *****************************************************************************************************************/
 #pragma once
 
+#define BIT3_INTO_BIT0(x) ((x&0x8)>>3)
+
 namespace reccore {
 namespace intel {
 
@@ -35,7 +37,8 @@ enum Reg_sti {ST0,ST1,ST2,ST3,ST4,ST5,ST6,ST7};
 enum Reg_mm{MM0,MM1,MM2,MM3,MM4,MM5,MM6,MM7};
 enum Reg_xmm{XMM0,XMM1,XMM2,XMM3,XMM4,XMM5,XMM6,XMM7,XMM8,XMM9,XMM10,XMM11,XMM12,XMM13,XMM14,XMM15};
 enum Reg_ymm{YMM0,YMM1,YMM2,YMM3,YMM4,YMM5,YMM6,YMM7,YMM8,YMM9,YMM10,YMM11,YMM12,YMM13,YMM14,YMM15};
-enum Reg_eee{CR0=0,CR2=2,CR3=3,CR4=4,DR0=0,DR1=1,DR2=2,DR3=3,DR6=6,DR7=7};
+enum Reg_CR{CR0=0,CR1=1,CR2=2,CR3=3,CR4=4,CR5=5,CR6=6,CR7=7,CR8=8};
+enum Reg_DR{DR0=0,DR1=1,DR2=2,DR3=3,DR4=4,DR5=5,DR6=6,DR7=7};
 enum Reg_sreg{ES,CS,SS,DS,FS,GS};
 
 enum JumpCode {
@@ -109,6 +112,9 @@ namespace Group4 {
 	const uint8_t ADDRESS_SIZE_OVERRIDE=0x67;
 }
 
+enum PP { kPPNone=0,kPP66=1,kPPF3=2,kPPF2=3 };
+enum MMMMM { k0F = 1, k0F38 = 2 ,k0F3A = 3 };
+
 __inline uint8_t REX(uint8_t W,uint8_t R,uint8_t X,uint8_t B) {
 	return 0x40|((W&0x1)<<3)|((R&0x1)<<2)|((X&0x1)<<1)|((B&0x1));
 }
@@ -133,6 +139,7 @@ __inline uint8_t VEX2_0() {
   return 0xC5;
 }
 
+
 __inline uint8_t VEX2_1(uint8_t R,uint8_t vvvv,uint8_t L,uint8_t pp) {
   R = ~R;
   vvvv = ~vvvv;
@@ -142,7 +149,11 @@ __inline uint8_t VEX2_1(uint8_t R,uint8_t vvvv,uint8_t L,uint8_t pp) {
 }
 
 
+
+
+
 }
 }
+
 #include "addressing.h"
 #include "ia32.h"

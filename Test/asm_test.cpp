@@ -25,9 +25,13 @@ memarr[i] = 0x11223344;
     mov eax,0x11223344
     mov [EDI+ESI*2],eax
 */
-    haddpd xmm1, xmm2
-    vhaddpd xmm1, xmm2 , xmm3
-    vhaddpd ymm1, ymm2 , ymm3
+  mov cr2,ebx
+  //vmovapd xmm1,xmm2
+  //vmovapd [eax],xmm3
+   // MOV [R8],ebx
+   // LDDQU xmm1,[eax]
+   // VLDDQU xmm1,[eax]
+   // VLDDQU ymm1,[eax]
 
 
     //cmp ecx,0x20000000

@@ -43,6 +43,11 @@ class Emitter	{
 
 	inline void emit8(uint8_t byte)	{
 		*(block_->ptr8bit+block_->cursor++) = byte;
+    #if defined(_DEBUG) && defined(_LOGEMIT)
+    wchar_t str[25];
+    swprintf(str,25,L"%02x",byte);
+    OutputDebugString(str);
+    #endif
 	}
 
 	inline void emit16(uint16_t bytes) {

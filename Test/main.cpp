@@ -1,7 +1,7 @@
-#include "../Lib/reccore.h"
+﻿#include "../Lib/reccore.h"
 
-int test() {
-  return 1;
+int test(int a,int b) {
+  return a+b;
 }
 
 //enum labels { kLoop };
@@ -24,18 +24,20 @@ int main() {
   reccore::Emitter e;
   block = e.CreateBlock(0x2000);
   e.set_block(block);
-  
+
+
+ 
   float fp_1 = 0.5f;
   {
     using namespace reccore::intel;
     IA32 ia32(&e);
-    //ia32.MOV(&test_num,EBX);
-    //ia32.MOV(EBX,EA(ModRM::kSIB_p_disp32,SIB::kEAX_m_4,EBP,0x11223344));
-    //ia32.PUSH(EA(ModRM::kEAX));
-    //ia32.MOV(EAX,0x11223344);
-    //ia32.PUSH(EAX);
-    //ia32.PUSH(uint8_t(0x11));
-    //ia32.JMP(uint8_t(6));
+
+    ia32.ENTER(200,10);
+
+    ia32.MOV(EAX,EA("[EBP+disp8]",8));    
+    ia32.ADD(EAX,EA("[EBP+disp8]",12));
+    
+
 /*
     //FPU Testing
     ia32.EMMS();
@@ -45,22 +47,31 @@ int main() {
   */
 
 /*
-AVX testing*/
-    ia32.HADDPD(XMM1,XMM2);
+AVX testing/SSE*/
+    //ia32.EXTRACTPS(EAX,XMM1,12);
+    //ia32.VEXTRACTPS(EAX,XMM1,12);
+  ia32.VMOVAPD(XMM1,EA(XMM2));
+  ia32.VMOVAPD(EA("[EAX]"),XMM3);
+
+   /* ia32.HADDPD(XMM1,XMM2);
     ia32.VHADDPD(XMM1,XMM2,EA(XMM3));
     ia32.VHADDPD(YMM1,YMM2,EA(YMM3));
     ia32.VADDSUBPD(XMM1,XMM2,EA(XMM3));
+    ia32.LDDQU(XMM1,EA("[EAX]"));
+    ia32.VLDDQU(XMM1,EA("[EAX]"));
+    ia32.VLDDQU(YMM1,EA("[EAX]"));*/
 
 
 
 /*loop test*/
-    ia32.PUSH(ESI);
-    ia32.PUSH(EDI);
+    
+    //ia32.PUSHAD();
 
 
     
 #ifdef _WIN64
     //ia32.LEA(RDI,memarr);
+    ia32.MOV(EA("[RAX+R9]"),RAX);
     ia32.MOV(RDI,(uint64_t)memarr);
     ia32.MOV(RSI,(uint64_t)0);
     ia32.MOV(RAX,0x11223344);
@@ -72,12 +83,12 @@ AVX testing*/
     ia32.ResolveJumps();
     ia32.MOV(RSI,&memarr[1]);
 #endif
-
-    /*ia32.LEA(EDI,memarr);
+/*
+    ia32.LEA(EDI,memarr);
     ia32.MOV(ESI,(uint32_t)0);
     ia32.MOV(EAX,0x11223344);
     ia32.Label(kLoop);
-    //ia32.MOV(("[EDI+ESI*4]"),EAX);
+    ia32.MOV(EA("[EDI+ESI*4]"),EAX);
     ia32.INC(ESI);
     ia32.CMP(ESI,256);
     ia32.JNE(kLoop);
@@ -87,13 +98,12 @@ AVX testing*/
     ia32.MOV(EAX,0x55667788);
     ia32.MOV(ECX,0x100);
     ia32.Label(kLoop);
-    ia32.MOV(("[EDI+ECX*4+disp8]",-4),EAX);
+    ia32.MOV(EA("[EDI+ECX*4+disp8]",-4),EAX);
     ia32.LOOP(kLoop);
     ia32.ResolveJumps();*/
 
-    ia32.POP(EDI);
-    ia32.POP(ESI);
-
+    //ia32.POPAD();
+  
 
     //ia32.MOV(ECX,1234);    
     //ia32.ADD(ECX,0x1);
@@ -101,13 +111,15 @@ AVX testing*/
     //ia32.Jcc(JNE,int8_t(off1-(2+block->cursor)));
     //ia32.ADD(EA(ModRM::kEBX),0x45);
     //ia32.CALL(&test);
+    ia32.LEAVE();
     ia32.RET();
-
-    
   }
+
+ 
+	auto func	= static_cast<int (*)(int a,int b)>(block->address);
+	int result = func(200,480);
   
-  
-  e.ExecuteBlock(block);
+  //e.ExecuteBlock(block);
   e.DestroyBlock(block);
 
   free(memarr2);
