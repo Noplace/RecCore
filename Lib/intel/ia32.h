@@ -158,19 +158,16 @@ class IA32 : public InstructionSet {
   void DIV(Reg16 reg);
   void DIV(Reg32 reg);
   void DIV(Reg64 reg);
-  void DIV(EA rm8);
+  void DIV(EA rm, IntSize size=Int32);
 
   void DIVPD(Reg_xmm a, EA b);
   void VDIVPD(Reg_xmm a, Reg_xmm b, EA c);
   void VDIVPD(Reg_ymm a, Reg_ymm b, EA c);
-  
   void DIVPS(Reg_xmm a, EA b);
   void VDIVPS(Reg_xmm a, Reg_xmm b, EA c);
   void VDIVPS(Reg_ymm a, Reg_ymm b, EA c);
-
   void DIVSD(Reg_xmm a, EA b);
   void VDIVSD(Reg_xmm a, Reg_xmm b, EA c);
-
   void DIVSS(Reg_xmm a, EA b);
   void VDIVSS(Reg_xmm a, Reg_xmm b, EA c);
 
@@ -264,7 +261,7 @@ class IA32 : public InstructionSet {
   void IDIV(Reg16 reg);
   void IDIV(Reg32 reg);
   void IDIV(Reg64 reg);
-  void IDIV(EA rm8);
+  void IDIV(EA rm, IntSize size=Int32);
 
   void INC(Reg32 reg);
   void INC(Reg64 reg);
@@ -447,9 +444,6 @@ class IA32 : public InstructionSet {
   void VMAXSD(Reg_xmm a, Reg_xmm b, EA c);
   void MAXSS(Reg_xmm a, EA b);
   void VMAXSS(Reg_xmm a, Reg_xmm b, EA c);
-  void MAXSUBPD(Reg_xmm a, EA b);
-  void VMAXSUBPD(Reg_xmm a, Reg_xmm b, EA c);
-  void VMAXSUBPD(Reg_ymm a, Reg_ymm b, EA c);
 
   void MFENCE();
 
@@ -463,9 +457,6 @@ class IA32 : public InstructionSet {
   void VMINSD(Reg_xmm a, Reg_xmm b, EA c);
   void MINSS(Reg_xmm a, EA b);
   void VMINSS(Reg_xmm a, Reg_xmm b, EA c);
-  void MINSUBPD(Reg_xmm a, EA b);
-  void VMINSUBPD(Reg_xmm a, Reg_xmm b, EA c);
-  void VMINSUBPD(Reg_ymm a, Reg_ymm b, EA c);
 
   void MONITOR();
 
@@ -514,13 +505,33 @@ class IA32 : public InstructionSet {
   void VMOVAPS(Reg_ymm a, EA b);
   void VMOVAPS(EA a, Reg_ymm b);
 
+  void MUL(Reg8 reg);
+  void MUL(Reg16 reg);
+  void MUL(Reg32 reg);
+  void MUL(Reg64 reg);
+  void MUL(EA rm, IntSize size=Int32);
+
+  void MULPD(Reg_xmm a, EA b);
+  void VMULPD(Reg_xmm a, Reg_xmm b, EA c);
+  void VMULPD(Reg_ymm a, Reg_ymm b, EA c);
+  void MULPS(Reg_xmm a, EA b);
+  void VMULPS(Reg_xmm a, Reg_xmm b, EA c);
+  void VMULPS(Reg_ymm a, Reg_ymm b, EA c);
+  void MULSD(Reg_xmm a, EA b);
+  void VMULSD(Reg_xmm a, Reg_xmm b, EA c);
+  void MULSS(Reg_xmm a, EA b);
+  void VMULSS(Reg_xmm a, Reg_xmm b, EA c);
+
   void MWAIT();
 
   void NOP();
 
+  void PAUSE();
+
   void POP(Reg32 reg);
   void POPA();
   void POPAD();
+
 
   void PUSH(EA mem); 
   void PUSH(Reg16 reg);
@@ -531,8 +542,29 @@ class IA32 : public InstructionSet {
   void PUSH(uint32_t imm);
   void PUSHA();
   void PUSHAD();
+  void PUSHF();
+  void PUSHFD();
+  void PUSHFQ();
 
+  void RDRAND(Reg16 reg);
+  void RDRAND(Reg32 reg);
+  void RDRAND(Reg64 reg);
+  void RDTSC();
+  void RDTSCP();
   void RET(bool farreturn=false);
+
+  void VFMADD132PD(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD213PD(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD231PD(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD132PD(Reg_ymm a, Reg_ymm b, EA c);
+  void VFMADD213PD(Reg_ymm a, Reg_ymm b, EA c);
+  void VFMADD231PD(Reg_ymm a, Reg_ymm b, EA c);
+  void VFMADD132PS(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD213PS(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD231PS(Reg_xmm a, Reg_xmm b, EA c);
+  void VFMADD132PS(Reg_ymm a, Reg_ymm b, EA c);
+  void VFMADD213PS(Reg_ymm a, Reg_ymm b, EA c);
+  void VFMADD231PS(Reg_ymm a, Reg_ymm b, EA c);
 
   //call if using labels, preferebly only call once after finishing writing to the  block
   //todo , 16bit and 32bit offsets

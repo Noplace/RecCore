@@ -7,7 +7,14 @@ int test(int a,int b) {
 //enum labels { kLoop };
 reccore::LabelType kLoop = 0;
 
+template<typename T1, typename T2>
+auto sum(T1 & t1, T2 & t2) -> decltype(t1 + t2){
+return t1 + t2;
+}
+
 int main() {
+
+
   
   {
     void asm_test();
@@ -48,10 +55,11 @@ int main() {
 
 /*
 AVX testing/SSE*/
+  //ia32.VFMADD132PD(XMM1,XMM2,XMM3);
     //ia32.EXTRACTPS(EAX,XMM1,12);
     //ia32.VEXTRACTPS(EAX,XMM1,12);
-  ia32.VMOVAPD(XMM1,EA(XMM2));
-  ia32.VMOVAPD(EA("[EAX]"),XMM3);
+  //ia32.VMOVAPD(XMM1,EA(XMM2));
+ // ia32.VMOVAPD(EA("[EAX]"),XMM3);
 
    /* ia32.HADDPD(XMM1,XMM2);
     ia32.VHADDPD(XMM1,XMM2,EA(XMM3));
@@ -115,7 +123,7 @@ AVX testing/SSE*/
     ia32.RET();
   }
 
- 
+  //int r = (*block)(200,480);
 	auto func	= static_cast<int (*)(int a,int b)>(block->address);
 	int result = func(200,480);
   

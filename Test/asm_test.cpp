@@ -25,7 +25,7 @@ memarr[i] = 0x11223344;
     mov eax,0x11223344
     mov [EDI+ESI*2],eax
 */
-  mov cr2,ebx
+  VFMADD132PD xmm1,xmm2,xmm3
   //vmovapd xmm1,xmm2
   //vmovapd [eax],xmm3
    // MOV [R8],ebx
