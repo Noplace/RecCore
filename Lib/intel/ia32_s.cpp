@@ -22,5 +22,20 @@
 namespace reccore {
 namespace intel {
 
+void IA32::SETcc(ConditionCode cc, EA rm) {
+  e->emit8(0x0F);
+  e->emit8(0x90|cc);
+  emitModRMSIB(e,rm);
+
+}
+
+void IA32::SHL(EA rm, uint8_t imm8) {
+  e->emit8(0xC0);
+  rm.reg = 4;
+  emitModRMSIB(e,rm);
+  e->emit8(imm8);
+}
+
+
 }
 }

@@ -46,7 +46,7 @@ inline void emitModRMSIB(Emitter* e, EA mem) {
 
 
 	e->emit8(_ModRM(mem.mod,mem.reg,mem.rm));
-  if (mem.rm == 4) {
+  if (mem.mod != 3 && mem.rm == 4) {
     e->emit8(_SIB(mem.scale,mem.index,mem.base));
   }
   if (mem.mod == 0 && ((mem.rm == 5) || (mem.rm == 4 && mem.base == EBP)))
@@ -145,6 +145,7 @@ class IA32 : public InstructionSet {
   void CALL(uint32_t rel32);
   void CALL(void* ptr);
 
+  void CMP(Reg8 reg, uint8_t imm8);
   void CMP(Reg32 reg, uint32_t imm32);
 
   void DAA();
@@ -263,132 +264,133 @@ class IA32 : public InstructionSet {
   void IDIV(Reg64 reg);
   void IDIV(EA rm, IntSize size=Int32);
 
+  void INC(Reg16 reg);
   void INC(Reg32 reg);
   void INC(Reg64 reg);
   void INC(EA mem);
 
-  void Jcc(JumpCode cc, int8_t rel8);
-  void Jcc(JumpCode cc, int16_t rel16);
-  void Jcc(JumpCode cc, int32_t rel32);
+  void Jcc(ConditionCode cc, int8_t rel8);
+  void Jcc(ConditionCode cc, int16_t rel16);
+  void Jcc(ConditionCode cc, int32_t rel32);
 
   void JA(LabelType label) {
-    Jcc(kJA,int8_t(0xFF));
+    Jcc(kCCA,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JAE(LabelType label) {
-    Jcc(kJAE,int8_t(0xFF));
+    Jcc(kCCAE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JB(LabelType label) {
-    Jcc(kJB,int8_t(0xFF));
+    Jcc(kCCB,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JBE(LabelType label) {
-    Jcc(kJBE,int8_t(0xFF));
+    Jcc(kCCBE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JC(LabelType label) {
-    Jcc(kJC,int8_t(0xFF));
+    Jcc(kCCC,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JE(LabelType label) {
-    Jcc(kJE,int8_t(0xFF));
+    Jcc(kCCE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JG(LabelType label) {
-    Jcc(kJG,int8_t(0xFF));
+    Jcc(kCCG,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JGE(LabelType label) {
-    Jcc(kJGE,int8_t(0xFF));
+    Jcc(kCCGE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JL(LabelType label) {
-    Jcc(kJL,int8_t(0xFF));
+    Jcc(kCCL,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JLE(LabelType label) {
-    Jcc(kJLE,int8_t(0xFF));
+    Jcc(kCCLE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNA(LabelType label) {
-    Jcc(kJNA,int8_t(0xFF));
+    Jcc(kCCNA,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNAE(LabelType label) {
-    Jcc(kJNAE,int8_t(0xFF));
+    Jcc(kCCNAE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNB(LabelType label) {
-    Jcc(kJNB,int8_t(0xFF));
+    Jcc(kCCNB,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNBE(LabelType label) {
-    Jcc(kJNBE,int8_t(0xFF));
+    Jcc(kCCNBE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNC(LabelType label) {
-    Jcc(kJNC,int8_t(0xFF));
+    Jcc(kCCNC,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNE(LabelType label) {
-    Jcc(kJNE,int8_t(0xFF));
+    Jcc(kCCNE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNG(LabelType label) {
-    Jcc(kJNG,int8_t(0xFF));
+    Jcc(kCCNG,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNGE(LabelType label) {
-    Jcc(kJNGE,int8_t(0xFF));
+    Jcc(kCCNGE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNL(LabelType label) {
-    Jcc(kJNL,int8_t(0xFF));
+    Jcc(kCCNL,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNLE(LabelType label) {
-    Jcc(kJNLE,int8_t(0xFF));
+    Jcc(kCCNLE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNO(LabelType label) {
-    Jcc(kJNO,int8_t(0xFF));
+    Jcc(kCCNO,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNP(LabelType label) {
-    Jcc(kJNP,int8_t(0xFF));
+    Jcc(kCCNP,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNS(LabelType label) {
-    Jcc(kJNS,int8_t(0xFF));
+    Jcc(kCCNS,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JNZ(LabelType label) {
-    Jcc(kJNZ,int8_t(0xFF));
+    Jcc(kCCNZ,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JO(LabelType label) {
-    Jcc(kJO,int8_t(0xFF));
+    Jcc(kCCO,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JP(LabelType label) {
-    Jcc(kJP,int8_t(0xFF));
+    Jcc(kCCP,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JPE(LabelType label) {
-    Jcc(kJPE,int8_t(0xFF));
+    Jcc(kCCPE,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JPO(LabelType label) {
-    Jcc(kJPO,int8_t(0xFF));
+    Jcc(kCCPO,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JS(LabelType label) {
-    Jcc(kJS,int8_t(0xFF));
+    Jcc(kCCS,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
   void JZ(LabelType label) {
-    Jcc(kJZ,int8_t(0xFF));
+    Jcc(kCCZ,int8_t(0xFF));
     jumps[jump_counter++] = {0,label,e->GetCursor()-1};
   }
 
@@ -526,7 +528,26 @@ class IA32 : public InstructionSet {
 
   void NOP();
 
+  void OR(Reg8 dest, uint8_t imm);
+  void OR(Reg16 dest, uint16_t imm);
+  void OR(Reg32 dest, uint32_t imm);
+  void OR(Reg64 dest, uint32_t imm);
+  void OR(EA rm, uint8_t imm);
+  void OR(EA rm, uint16_t imm);
+  void OR(EA rm, uint32_t imm);
+  void OR(EA rm, Reg8 reg);
+  void OR(EA rm, Reg16 reg);
+  void OR(EA rm, Reg32 reg);
+  void OR(EA rm, Reg64 reg);
+  void OR(Reg8 reg, EA rm);
+  void OR(Reg16 reg, EA rm);
+  void OR(Reg32 reg, EA rm);
+  void OR(Reg64 reg, EA rm);
+
   void PAUSE();
+
+  void PCLMULQDQ(Reg_xmm a, EA b, uint8_t imm8);
+  void VPCLMULQDQ(Reg_xmm a, Reg_xmm b, EA c, uint8_t imm8);
 
   void POP(Reg32 reg);
   void POPA();
@@ -553,6 +574,10 @@ class IA32 : public InstructionSet {
   void RDTSCP();
   void RET(bool farreturn=false);
 
+  void SETcc(ConditionCode cc, EA rm);
+
+  void SHL(EA rm, uint8_t imm8);
+
   void VFMADD132PD(Reg_xmm a, Reg_xmm b, EA c);
   void VFMADD213PD(Reg_xmm a, Reg_xmm b, EA c);
   void VFMADD231PD(Reg_xmm a, Reg_xmm b, EA c);
@@ -565,6 +590,11 @@ class IA32 : public InstructionSet {
   void VFMADD132PS(Reg_ymm a, Reg_ymm b, EA c);
   void VFMADD213PS(Reg_ymm a, Reg_ymm b, EA c);
   void VFMADD231PS(Reg_ymm a, Reg_ymm b, EA c);
+
+  void VPSRAVD(Reg_xmm a, Reg_xmm b, EA c);
+  void VPSRAVD(Reg_ymm a, Reg_ymm b, EA c);
+
+  void XTEST();
 
   //call if using labels, preferebly only call once after finishing writing to the  block
   //todo , 16bit and 32bit offsets

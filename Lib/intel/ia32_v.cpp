@@ -131,5 +131,23 @@ void IA32::VFMADD231PS(Reg_ymm a, Reg_ymm b, EA c) {
   emitModRMSIB(e,c);
 }
 
+void IA32::VPSRAVD(Reg_xmm a, Reg_xmm b, EA c) {
+  c.reg = a;
+  e->emit8(PREFIX::VEX3_0());
+  e->emit8(PREFIX::VEX3_1(a>>3,0,c.rm>>3,PREFIX::k0F38));
+  e->emit8(PREFIX::VEX3_2(0,b,0,PREFIX::kPP66));
+  e->emit8(0x46);
+  emitModRMSIB(e,c);
+}
+
+void IA32::VPSRAVD(Reg_ymm a, Reg_ymm b, EA c) {
+  c.reg = a;
+  e->emit8(PREFIX::VEX3_0());
+  e->emit8(PREFIX::VEX3_1(a>>3,0,c.rm>>3,PREFIX::k0F38));
+  e->emit8(PREFIX::VEX3_2(0,b,1,PREFIX::kPP66));
+  e->emit8(0x46);
+  emitModRMSIB(e,c);
+}
+
 }
 }

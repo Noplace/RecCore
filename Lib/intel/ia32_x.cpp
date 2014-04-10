@@ -22,5 +22,12 @@
 namespace reccore {
 namespace intel {
 
+
+void IA32::XTEST() {
+  e->emit8(0x0F);
+  e->emit8(0x01);
+  e->emit8(0xD6);
+}
+
 }
 }

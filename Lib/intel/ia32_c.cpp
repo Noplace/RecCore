@@ -22,98 +22,52 @@
 namespace reccore {
 namespace intel {
 
-void IA32::PAUSE() {
-  e->emit8(0xF3);
-  e->emit8(0x90);
-}
 
 
-void IA32::PCLMULQDQ(Reg_xmm a, EA b, uint8_t imm8) {
-  e->emit8(0x66);
-  e->emit8(0x0F);
-  e->emit8(0x3A);
-  e->emit8(0x44);
-  b.reg = a;
-  emitModRMSIB(e,b);
-  e->emit8(imm8);
-}
-
-void IA32::VPCLMULQDQ(Reg_xmm a, Reg_xmm b, EA c, uint8_t imm8) {
-  c.reg = a;
-  e->emit8(PREFIX::VEX3_0());
-  e->emit8(PREFIX::VEX3_1(a>>3,0,c.rm>>3,PREFIX::k0F3A));
-  e->emit8(PREFIX::VEX3_2(0,b,0,PREFIX::kPP66));
-  e->emit8(0x44);
-  emitModRMSIB(e,c);
-  e->emit8(imm8);
-}
-
-void IA32::POP(Reg32 reg) {
-  e->emit8(0x58|(reg&0x7));
-}
-
-void IA32::PUSH(EA mem) {
-  e->emit8(0xFF);
-  mem.reg = 6;
-  emitModRMSIB(e,mem);
-}
-
-void IA32::POPA() {
-	e->emit8(0x61);
-}
-
-void IA32::POPAD() {
-	e->emit8(0x61);
-}
-
-void IA32::PUSH(Reg16 reg) {
+void IA32::CALL(uint16_t rel16) {
   e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
-	e->emit8(0x50+reg);
+  e->emit8(0xE8);
+  e->emit16(rel16);
 }
 
-void IA32::PUSH(Reg32 reg) {
-	e->emit8(0x50+reg);
-}
-
-void IA32::PUSH(Reg64 reg) {
-	e->emit8(0x50+reg);
-}
-
-void IA32::PUSH(uint8_t imm) {
-  e->emit8(0x6A);
-  e->emit8(imm);
-}
-
-void IA32::PUSH(uint16_t imm) {
-  e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
-  e->emit8(0x68);
-  e->emit16(imm);
-}
+void IA32::CALL(uint32_t rel32) {
   
-void IA32::PUSH(uint32_t imm) {
-  e->emit8(0x68);
-  e->emit32(imm);
+  e->emit8(0xE8);
+  e->emit32(rel32);
 }
 
-void IA32::PUSHA() {
-  e->emit8(0x60);
+void IA32::CALL(void* ptr) {
+
+  auto rel32 = intptr_t(ptr) - (intptr_t(e->block()->address)+e->block()->cursor+5);
+  CALL(uint32_t(rel32));
+  /*MOV(EAX,uint32_t(ptr));
+  e->emit8(0xFF);
+  e->emit8(ModRM(3,2,EAX));*/
 }
 
-void IA32::PUSHAD() {
-  e->emit8(0x60);
+
+void IA32::CMP(Reg8 reg, uint8_t imm8) {
+  if (reg == AL) {
+    e->emit8(0x3C);
+    e->emit8(imm8);
+  } else {
+    e->emit8(0x80);
+    e->emit8(_ModRM(0x3,7,reg));
+    e->emit8(imm8);
+  }
 }
 
-void IA32::PUSHF() {
-  e->emit8(0x9C);
+void IA32::CMP(Reg32 reg, uint32_t imm32) {
+  if (reg == EAX) {
+    e->emit8(0x3D);
+    e->emit32(imm32);
+  } else {
+    e->emit8(0x81);
+    e->emit8(_ModRM(0x3,7,reg));
+    e->emit32(imm32);
+  }
 }
 
-void IA32::PUSHFD() {
-  e->emit8(0x9C);
-}
-
-void IA32::PUSHFQ() {
-  e->emit8(0x9C);
-}
 
 }
 }

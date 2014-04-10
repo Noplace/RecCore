@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aes.cpp" />
     <ClCompile Include="asm_test.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

@@ -23,19 +23,19 @@ namespace reccore {
 namespace intel {
 
 
-void IA32::Jcc(JumpCode cc, int8_t rel8) {
+void IA32::Jcc(ConditionCode cc, int8_t rel8) {
   e->emit8(0x70|cc);
   e->emit8(rel8);
 }
 
-void IA32::Jcc(JumpCode cc, int16_t rel16) {
+void IA32::Jcc(ConditionCode cc, int16_t rel16) {
   e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
   e->emit8(0x0F);
   e->emit8(0x80|cc);
   e->emit16(rel16);
 }
 
-void IA32::Jcc(JumpCode cc, int32_t rel32) {
+void IA32::Jcc(ConditionCode cc, int32_t rel32) {
   e->emit8(0x0F);
   e->emit8(0x80|cc);
   e->emit32(rel32);

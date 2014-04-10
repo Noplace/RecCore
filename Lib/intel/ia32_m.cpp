@@ -264,7 +264,7 @@ void IA32::MOV(Reg32 dest, Reg32 src) {
 }
 
 void IA32::MOV(Reg8 dest, uint8_t imm) {
-	e->emit8(0xB8|(dest&0x7));
+	e->emit8(0xB0|(dest&0x7));
 	e->emit8(imm);
 }
 

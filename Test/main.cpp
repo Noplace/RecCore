@@ -18,6 +18,8 @@ int main() {
   
   {
     void asm_test();
+    void aes_test();
+    aes_test();
     //asm_test();
   }
     
@@ -39,10 +41,10 @@ int main() {
     using namespace reccore::intel;
     IA32 ia32(&e);
 
-    ia32.ENTER(200,10);
+   // ia32.ENTER(200,10);
 
-    ia32.MOV(EAX,EA("[EBP+disp8]",8));    
-    ia32.ADD(EAX,EA("[EBP+disp8]",12));
+    //ia32.MOV(EAX,EA("[EBP+disp8]",8));    
+    //ia32.ADD(EAX,EA("[EBP+disp8]",12));
     
 
 /*
@@ -52,7 +54,8 @@ int main() {
     ia32.FLD(EA("[disp32]",(int32_t)&fp_1),FP32);
     ia32.FCOS();
   */
-
+  ia32.PCLMULQDQ(XMM1,XMM2,81);
+  ia32.VPCLMULQDQ(XMM1,XMM2,EA("[EAX]"),81);
 /*
 AVX testing/SSE*/
   //ia32.VFMADD132PD(XMM1,XMM2,XMM3);
@@ -119,7 +122,7 @@ AVX testing/SSE*/
     //ia32.Jcc(JNE,int8_t(off1-(2+block->cursor)));
     //ia32.ADD(EA(ModRM::kEBX),0x45);
     //ia32.CALL(&test);
-    ia32.LEAVE();
+    //ia32.LEAVE();
     ia32.RET();
   }
 

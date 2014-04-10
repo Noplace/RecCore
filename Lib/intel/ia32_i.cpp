@@ -22,98 +22,86 @@
 namespace reccore {
 namespace intel {
 
-void IA32::PAUSE() {
-  e->emit8(0xF3);
-  e->emit8(0x90);
+
+void IA32::IDIV(Reg8 reg) {
+  e->emit8(0xF6);
+  e->emit8(_ModRM(3,7,reg));
+}
+
+void IA32::IDIV(Reg16 reg) {
+  e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
+  e->emit8(0xF7);
+  e->emit8(_ModRM(3,7,reg));
+}
+
+void IA32::IDIV(Reg32 reg) {
+  e->emit8(0xF7);
+  e->emit8(_ModRM(3,7,reg));
+}
+
+void IA32::IDIV(Reg64 reg) {
+  EA rm(reg);
+  emitREX(e,rm);
+  e->emit8(0xF7);
+  rm.reg = 7;
+  emitModRMSIB(e,rm);
 }
 
 
-void IA32::PCLMULQDQ(Reg_xmm a, EA b, uint8_t imm8) {
-  e->emit8(0x66);
-  e->emit8(0x0F);
-  e->emit8(0x3A);
-  e->emit8(0x44);
-  b.reg = a;
-  emitModRMSIB(e,b);
-  e->emit8(imm8);
+
+void IA32::IDIV(EA rm, IntSize size) {
+  switch (size) {
+    case Int8:
+      e->emit8(0xF6);
+      rm.reg = 7;
+      emitModRMSIB(e,rm);
+    break;
+    case Int16:
+      e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
+      e->emit8(0xF7);
+      rm.reg = 7;
+      emitModRMSIB(e,rm);
+    break;
+    case Int32:
+      e->emit8(0xF7);
+      rm.reg = 7;
+      emitModRMSIB(e,rm);
+    break;
+    case Int64:
+      emitREX(e,rm);
+      e->emit8(0xF7);
+      rm.reg = 7;
+      emitModRMSIB(e,rm);
+    break;
+  }
 }
 
-void IA32::VPCLMULQDQ(Reg_xmm a, Reg_xmm b, EA c, uint8_t imm8) {
-  c.reg = a;
-  e->emit8(PREFIX::VEX3_0());
-  e->emit8(PREFIX::VEX3_1(a>>3,0,c.rm>>3,PREFIX::k0F3A));
-  e->emit8(PREFIX::VEX3_2(0,b,0,PREFIX::kPP66));
-  e->emit8(0x44);
-  emitModRMSIB(e,c);
-  e->emit8(imm8);
-}
-
-void IA32::POP(Reg32 reg) {
-  e->emit8(0x58|(reg&0x7));
-}
-
-void IA32::PUSH(EA mem) {
+void IA32::INC(Reg16 reg) {
+  e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
   e->emit8(0xFF);
-  mem.reg = 6;
+  e->emit8(_ModRM(3,0,reg));
+}
+
+void IA32::INC(Reg32 reg) {
+  e->emit8(0xFF);
+  e->emit8(_ModRM(3,0,reg));
+}
+
+void IA32::INC(Reg64 reg) {
+  e->emit8(PREFIX::REX(1,0,0,reg>>3));
+  e->emit8(0xFF);
+  e->emit8(_ModRM(3,0,reg));
+}
+
+void IA32::INC(EA mem) {
+  mem.reg = 0;
+  if (mem.mode == 1)
+    emitREX(e,mem);
+  e->emit8(0xFF);
   emitModRMSIB(e,mem);
 }
 
-void IA32::POPA() {
-	e->emit8(0x61);
-}
 
-void IA32::POPAD() {
-	e->emit8(0x61);
-}
-
-void IA32::PUSH(Reg16 reg) {
-  e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
-	e->emit8(0x50+reg);
-}
-
-void IA32::PUSH(Reg32 reg) {
-	e->emit8(0x50+reg);
-}
-
-void IA32::PUSH(Reg64 reg) {
-	e->emit8(0x50+reg);
-}
-
-void IA32::PUSH(uint8_t imm) {
-  e->emit8(0x6A);
-  e->emit8(imm);
-}
-
-void IA32::PUSH(uint16_t imm) {
-  e->emit8(PREFIX::Group3::OPERAND_SIZE_OVERRIDE);
-  e->emit8(0x68);
-  e->emit16(imm);
-}
-  
-void IA32::PUSH(uint32_t imm) {
-  e->emit8(0x68);
-  e->emit32(imm);
-}
-
-void IA32::PUSHA() {
-  e->emit8(0x60);
-}
-
-void IA32::PUSHAD() {
-  e->emit8(0x60);
-}
-
-void IA32::PUSHF() {
-  e->emit8(0x9C);
-}
-
-void IA32::PUSHFD() {
-  e->emit8(0x9C);
-}
-
-void IA32::PUSHFQ() {
-  e->emit8(0x9C);
-}
 
 }
 }
