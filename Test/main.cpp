@@ -19,7 +19,7 @@ int main() {
   {
     void asm_test();
     void aes_test();
-    aes_test();
+    //aes_test();
     //asm_test();
   }
     
