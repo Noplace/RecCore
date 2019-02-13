@@ -42,6 +42,9 @@
     <ClInclude Include="intel\ia32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mem_mgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="emitter.cpp">

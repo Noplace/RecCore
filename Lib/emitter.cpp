@@ -28,16 +28,16 @@ Emitter::~Emitter() {
 
 }
 
-CodeBlock*	Emitter::CreateBlock(SIZE_T __in pSize) {
+CodeBlock*	Emitter::create_block(SIZE_T __in pSize) {
 	CodeBlock* block = new CodeBlock();
 	block->size      = pSize;
 	block->cursor	   = 0;
-  block->address 	 = VirtualAlloc(0,block->size,MEM_COMMIT,PAGE_EXECUTE_READWRITE);
+	block->address 	 = VirtualAlloc(0,block->size,MEM_COMMIT,PAGE_EXECUTE_READWRITE);
 	block->ptr8bit   = static_cast<uint8_t*>(block->address);
 	return block;
 }
 
-void	Emitter::DestroyBlock(CodeBlock* __in pBlock) {
+void	Emitter::destroy_block(CodeBlock* __in pBlock) {
 #ifdef _DEBUG
   assert(pBlock != nullptr);
 #endif
@@ -46,7 +46,7 @@ void	Emitter::DestroyBlock(CodeBlock* __in pBlock) {
 	delete pBlock;
 }
 
-void	Emitter::ExecuteBlock(CodeBlock* __in pBlock) {
+void	Emitter::execute_block(CodeBlock* __in pBlock) {
 	void (*CallableAddress)();
 	CallableAddress	= static_cast<void (*)()>(pBlock->address);
 	CallableAddress();

@@ -15,7 +15,7 @@ struct CodeBlock {
 
 
 
-  void operator ()() {
+  /*void operator ()() {
 	  auto func	= static_cast<void (*)()>(address);
 	  return func();
   }
@@ -30,6 +30,12 @@ struct CodeBlock {
   void operator ()(P1 p1, P2 p2) {
 	  auto func	= static_cast<void (*)(P1,P2)>(address);
 	  return func(p1,p2);
+  }*/
+
+  template<class ... Params>
+  void operator ()(Params... params) {
+	  auto func = static_cast<void(*)(Params...)>(address);
+	  return func(params...);
   }
 };
 

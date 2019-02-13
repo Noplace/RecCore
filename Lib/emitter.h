@@ -25,9 +25,9 @@ class Emitter	{
 	Emitter();
 	~Emitter();
 
-	CodeBlock*	CreateBlock(SIZE_T __in pSize);
-	void	DestroyBlock(CodeBlock* __in pBlock);
-	void	ExecuteBlock(CodeBlock* __in pBlock);
+	CodeBlock*	create_block(SIZE_T __in pSize);
+	void	destroy_block(CodeBlock* __in pBlock);
+	void	execute_block(CodeBlock* __in pBlock);
 
   inline SIZE_T	GetCursor() {
 	  return block_->cursor;

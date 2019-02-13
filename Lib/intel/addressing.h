@@ -313,7 +313,7 @@ struct EAAddressForm {
 };
 
 
-const EAAddressForm addressforms[] = {
+constexpr EAAddressForm addressforms[] = {
   {"[EAX]",0,0,0,0,0,0,0},                          {"[RAX]",0,0,0,0,0,0,1},          
 	{"[ECX]",1,0,0,0,0,0,0},                          {"[RCX]",1,0,0,0,0,0,1},          
 	{"[EDX]",2,0,0,0,0,0,0},                          {"[RDX]",2,0,0,0,0,0,1},          
@@ -1134,6 +1134,8 @@ const EAAddressForm addressforms[] = {
 
 };
 
+
+
 struct EA {
   uint8_t mode;
   uint8_t mod;
@@ -1144,26 +1146,32 @@ struct EA {
   uint8_t base; 
 
   int32_t displacement;
-  
-  EA(char* form) : mod(0),reg(0),rm(0),scale(0),index(0),base(0),mode(0) {
-    for (auto ptr = &addressforms[0]; ptr!=nullptr;++ptr) {
-      if(!strcmp(form,ptr->text)) {
-			  mod = ptr->mod;
-        reg = ptr->reg;
-        rm = ptr->rm;
-        base = ptr->base;        
-        index = ptr->index;
-        scale = ptr->ss;
-        mode = ptr->mode;
-        break;
+
+  static constexpr void mode_string_to_vars(char* form, EA* ea) {
+	  for (auto ptr = &addressforms[0]; ptr != nullptr; ++ptr) {
+		  if (!strcmp(form, ptr->text)) {
+			  ea->mod = ptr->mod;
+			  ea->reg = ptr->reg;
+			  ea->rm = ptr->rm;
+			  ea->base = ptr->base;
+			  ea->index = ptr->index;
+			  ea->scale = ptr->ss;
+			  ea->mode = ptr->mode;
+			  break;
 		  }
-    }
+	  }
   }
+
+  EA(char* form) : mod(0), reg(0), rm(0), scale(0), index(0), base(0), mode(0) {
+	  mode_string_to_vars(form, this);
+  }
+
   EA(char* form, int32_t displacement) : EA(form) {
-    this->displacement = displacement;
+	  this->displacement = displacement;
   }
-  EA(uint8_t rm) : mod(3),reg(0),rm(rm),scale(0),index(0),base(0),mode(0) {
-    
+
+  EA(uint8_t rm) : mod(3), reg(0), rm(rm), scale(0), index(0), base(0), mode(0) {
+
   }
 
 };
@@ -1172,3 +1180,4 @@ struct EA {
 
 }
 }
+

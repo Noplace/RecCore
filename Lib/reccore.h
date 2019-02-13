@@ -26,6 +26,7 @@
 #include <map>
 #include <stdint.h>
 #include "types.h"
+#include "mem_mgr.h"
 #include "emitter.h"
 #include "instructionset.h"
 #include "intel/intel.h"

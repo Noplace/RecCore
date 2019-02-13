@@ -14,6 +14,7 @@ return t1 + t2;
 
 int main() {
 
+	MemMgr memmgr(1024*1024*10);
 
   
   {
@@ -31,7 +32,7 @@ int main() {
   int test_num=0x11223300;
   reccore::CodeBlock* block;
   reccore::Emitter e;
-  block = e.CreateBlock(0x2000);
+  block = e.create_block(0x2000);
   e.set_block(block);
 
 
@@ -54,8 +55,9 @@ int main() {
     ia32.FLD(EA("[disp32]",(int32_t)&fp_1),FP32);
     ia32.FCOS();
   */
-  ia32.PCLMULQDQ(XMM1,XMM2,81);
-  ia32.VPCLMULQDQ(XMM1,XMM2,EA("[EAX]"),81);
+	
+  //ia32.PCLMULQDQ(XMM1,XMM2,81);
+  //ia32.VPCLMULQDQ(XMM1,XMM2,EA("[EAX]"),81);
 /*
 AVX testing/SSE*/
   //ia32.VFMADD132PD(XMM1,XMM2,XMM3);
@@ -126,12 +128,13 @@ AVX testing/SSE*/
     ia32.RET();
   }
 
+  (*block)(1, 2, 3);
   //int r = (*block)(200,480);
-	auto func	= static_cast<int (*)(int a,int b)>(block->address);
-	int result = func(200,480);
+	//auto func	= static_cast<int (*)(int a,int b)>(block->address);
+	//int result = func(200,480);
   
   //e.ExecuteBlock(block);
-  e.DestroyBlock(block);
+  e.destroy_block(block);
 
   free(memarr2);
   free(memarr);
