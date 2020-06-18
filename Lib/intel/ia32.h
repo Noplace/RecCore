@@ -599,7 +599,7 @@ class IA32 : public InstructionSet {
   //call if using labels, preferebly only call once after finishing writing to the  block
   //todo , 16bit and 32bit offsets
   void ResolveJumps() {
-    for each (auto jump in jumps) {
+    for (auto jump : jumps) {
       auto item = jump.second;
       switch (item.size) {
         case 0 :  {
